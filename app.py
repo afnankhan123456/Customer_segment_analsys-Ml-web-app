@@ -7,23 +7,20 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # ---------------------------------
-# Step 1: Define all absolute paths
+# FIXED: Correct base path for Render (Linux + Windows)
 # ---------------------------------
-BASE_PATH = r"C:\Users\Afnan Khan\Desktop\smartseg-project"
+BASE_PATH = os.path.dirname(os.path.abspath(__file__))
 
 TEMPLATES_PATH = os.path.join(BASE_PATH, "templates")
 STATIC_PATH = os.path.join(BASE_PATH, "static")
-PIPELINE_PATH = os.path.join(BASE_PATH, "customer_segmentation.pkl")  
+PIPELINE_PATH = os.path.join(BASE_PATH, "customer_segmentation.pkl")
 OUTPUT_DIR = os.path.join(BASE_PATH, "outputs")
 
 # ---------------------------------
-# Step 2: Initialize Flask App
+# FIXED: Initialize Flask App PROPERLY
 # ---------------------------------
-app = Flask(
-    __name__,
-    template_folder=TEMPLATES_PATH,
-    static_folder=STATIC_PATH
-)
+# No need to pass template_folder/static_folder manually
+app = Flask(__name__)
 
 # ---------------------------------
 # Step 3: Home Route
@@ -60,7 +57,7 @@ def upload():
         pca = pipeline.named_steps['pca']
         dbscan = pipeline.named_steps['dbscan']
 
-        # ✅ Step 4: Handle column mismatch automatically
+        # Handle column mismatch automatically
         if hasattr(pipeline, "columns_used"):
             expected_cols = pipeline.columns_used
         else:
@@ -71,7 +68,7 @@ def upload():
             if col not in df_clean.columns:
                 df_clean[col] = 0
 
-        # Drop extra columns not used during training
+        # Drop extra columns
         df_clean = df_clean[[c for c in df_clean.columns if c in expected_cols]]
 
         # Step 5: Use pipeline components
@@ -93,7 +90,8 @@ def upload():
         ⚠️ Noise Points: {num_noise}
         """
 
-        # Step 8: Visualization (Scatter Plot)
+        # Step 8: Visualization
+        os.makedirs(STATIC_PATH, exist_ok=True)
         plt.figure(figsize=(6, 4))
         plt.scatter(X_pca[:, 0], X_pca[:, 1], c=labels, cmap='viridis', s=20)
         plt.title("Customer Segments (PCA + DBSCAN)")
