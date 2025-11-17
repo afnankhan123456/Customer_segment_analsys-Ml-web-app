@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SmartSeg Results</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: Arial, sans-serif;
+            background-image: url("{{ url_for('static', filename='backgroud.png') }}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            margin-top: 40px;
+        }
+
+        h2 {
+            font-size: 36px;
+            color: #ffffff;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
+        }
+
+        p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        table {
+            margin: 0 auto;
+            border-collapse: collapse;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        th, td {
+            border: 1px solid #999;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 30px;
+            text-decoration: none;
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 16px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            transition: 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #1e7e34;
+            transform: scale(1.05);
+        }
+
+        /* Cluster summary styling */
+        .summary-box {
+            background: rgba(255, 255, 255, 0.9);
+            color: #000;
+            display: inline-block;
+            margin: 20px auto;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        /* Scatter plot styling */
+        img.plot {
+            width: 70%;
+            margin-top: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        }
+    </style>
+</head>
+<body>
+    <h2>📊 SmartSeg Customer Segmentation Results</h2>
+    <p>Below is a preview of your processed data:</p>
+
+    <!-- ✅ Cluster Summary -->
+    {% if summary %}
+    <div class="summary-box">
+        {{ summary | safe }}
+    </div>
+    {% endif %}
+
+    <!-- ✅ Scatter Plot -->
+    {% if plot_image %}
+    <div>
+        <h3>🟢 Cluster Visualization (PCA Scatter Plot)</h3>
+        <img src="{{ url_for('static', filename=plot_image) }}" alt="Cluster Plot" class="plot">
+    </div>
+    {% endif %}
+
+    <!-- ✅ Data Table -->
+    <div>{{ tables | safe }}</div>
+
+    <!-- ✅ Download Button -->
+    <a href="/download/{{ filename }}" class="btn">⬇️ Download Full Result</a>
+</body>
+</html>
